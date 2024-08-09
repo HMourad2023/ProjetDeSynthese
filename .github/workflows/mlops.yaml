@@ -23,21 +23,19 @@ jobs:
     - name: Configure DVC
       run: |
         dvc config core.analytics false
-    
-    - name: Run authentication script
-      env:
-        GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets. secrets.GOOGLE_CREDENTIALS }}
-      run: python auth.py
 
     - name: Setup Google Credentials
+      env:
+        GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
       run: |
         mkdir -p ~/.config/gdrive
-        echo "${{ secrets. secrets.GOOGLE_CREDENTIALS }}" > ~/.config/gdrive/credentials.json
+        echo "${GOOGLE_APPLICATION_CREDENTIALS}" > ~/.config/gdrive/credentials.json
+
+    - name: Run authentication script
+      run: python auth.py
 
     - name: Pull data from DVC remote
       run: dvc pull
-
-
 
     - name: Data Processing and Model Training
       run: |
@@ -66,5 +64,3 @@ jobs:
       run: |
         pip install streamlit
         streamlit share deploy --token $STREAMLIT_AUTH_TOKEN --app-dir ./src --port 8501
-
-
