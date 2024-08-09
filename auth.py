@@ -1,21 +1,27 @@
-from google.oauth2 import service_account
+from google.oauth2 import InstalledAppCredentials
 from googleapiclient.discovery import build
 import os
 import json
 
-# Chargement des credentials depuis la variable d'environnement
-GOOGLE_APPLICATION_CREDENTIALS = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
+# Charger les identifiants OAuth 2.0 depuis une variable d'environnement
+credentials_json = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
 
-if GOOGLE_APPLICATION_CREDENTIALS is None:
+if credentials_json is None:
     raise ValueError("GOOGLE_APPLICATION_CREDENTIALS environment variable is not set")
 
-credentials_info = json.loads(GOOGLE_APPLICATION_CREDENTIALS)
-credentials = service_account.Credentials.from_service_account_info(
-    credentials_info, scopes=['https://www.googleapis.com/auth/drive.file'])
+# Convertir le JSON en dictionnaire
+credentials_info = json.loads(credentials_json)
 
-service = build('drive', 'v3', credentials=credentials)
+# Préparer les informations pour l'authentification
+creds = InstalledAppCredentials.from_client_info(
+    client_info=credentials_info,
+    scopes=['https://www.googleapis.com/auth/drive.metadata.readonly']
+)
 
-# Liste des fichiers dans Google Drive
+# Construire le service Google Drive
+service = build('drive', 'v3', credentials=creds)
+
+# Liste les fichiers dans Google Drive
 results = service.files().list().execute()
 files = results.get('files', [])
 
@@ -25,4 +31,5 @@ else:
     print('Files:')
     for file in files:
         print(f"{file.get('name')} ({file.get('id')})")
+
 
