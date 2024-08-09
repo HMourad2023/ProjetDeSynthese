@@ -1,0 +1,8 @@
+joblib
+mlflow
+mlxtend
+numpy
+pandas
+PyYAML
+scikit_learn
+streamlit

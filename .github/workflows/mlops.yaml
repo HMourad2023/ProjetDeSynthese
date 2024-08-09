@@ -1,0 +1,46 @@
+name: ML Ops Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  dvc:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Source Code
+      uses: actions/checkout@v3
+
+    - name: Setup Python Environment
+      uses: actions/setup-python@v3
+      with:
+        python-version: 3.12.4
+
+    - name: Install Project Dependencies
+      run: |
+        pip install --upgrade pip
+        pip install --upgrade google-api-python-client google-auth
+        pip install -r requirements.txt
+
+    - name : Set up Google Drive credentials
+      run : python drive_access.py
+      env : 
+        GOOGLE_DRIVE_CREDENTIALS : ${{ secrets.GOOGLE_DRIVE_CREDENTIALS }}
+
+    - name: Retrieve Data from DVC Remote
+      run: dvc pull
+
+    - name: Execute Pipeline
+      run: |
+        dvc repro
+
+    - name: Upload Updated Data to DVC Remote
+      run: dvc push
+
+    - name: Verify DVC Data Status
+      run: dvc status

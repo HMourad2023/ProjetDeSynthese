@@ -1,0 +1,39 @@
+data:
+  source_path: "C:/Users/Asus_M/Desktop/data.csv"
+  external_data_path: "data/external/data.csv"
+  prepared_data_path: "data/prepared/prepared_data.csv"
+  transformed_data_path: "data/processed/transformed_data.csv"
+  splitted_data:
+    X_train: "data/splitted/X_train.csv"
+    X_test: "data/splitted/X_test.csv"
+    y_train: "data/splitted/y_train.csv"
+    y_test: "data/splitted/y_test.csv"
+  features:
+    file_path: "notebooks/features.txt"  # Chemin du fichier features.txt
+    X_train_selected: "data/features/X_train_selected.csv"
+    X_test_selected: "data/features/X_test_selected.csv"
+  model:
+    path: "model/best_model.pkl"  # Le chemin du modèle local
+  metrics:
+    path: "metrics/metrics.txt"  # Le chemin des métriques
+
+processing:
+  split_data:
+    test_size: 0.2
+  select_features:
+    k_features: 'best'
+    n_jobs: -1
+    cv: 3
+    scoring: 'neg_mean_squared_error'
+    verbose: 2
+
+dvc:
+  remote:
+    name: 'myremote'
+    url: 'gdrive://1AnYwmOl3lgNtgs5zFQ3WV8kyGI7o7dlr'
+    service_account_json: 'C:/Users/Asus_M/Desktop/credentials.json'
+
+mlflow:
+  tracking_uri: "http://localhost:5000"
+  experiment_name: "experience1"
+  model_name: "Best_Model"  # Nom du modèle dans MLflow Registry

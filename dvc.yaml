@@ -1,0 +1,63 @@
+stages:
+  load_data:
+    cmd: python src/load_data.py
+    deps:
+      - params.yaml
+      - C:/Users/Asus_M/Desktop/data.csv
+    outs:
+      - data/external/data.csv
+
+  prepare_data:
+    cmd: python src/prepare_data.py
+    deps:
+      - src/prepare_data.py
+      - data/external/data.csv
+      - params.yaml
+    outs:
+      - data/prepared/prepared_data.csv
+
+  transform_data:
+    cmd: python src/transform_data.py
+    deps:
+      - src/transform_data.py
+      - data/prepared/prepared_data.csv
+      - params.yaml
+    outs:
+      - data/processed/transformed_data.csv
+
+  split_data:
+    cmd: python src/split_data.py
+    deps:
+      - src/split_data.py
+      - data/processed/transformed_data.csv
+      - params.yaml
+    outs:
+      - data/splitted/X_train.csv
+      - data/splitted/X_test.csv
+      - data/splitted/y_train.csv
+      - data/splitted/y_test.csv
+
+  create_features:
+    cmd: python src/features.py
+    deps:
+      - src/features.py
+      - data/splitted/X_train.csv
+      - data/splitted/y_train.csv
+      - data/features/features.txt  # Ajout du fichier features.txt
+      - params.yaml
+    outs:
+      - data/features/X_train_selected.csv
+      - data/features/X_test_selected.csv
+
+  train_and_log_model:
+    cmd: python src/train_and_log_model.py
+    deps:
+      - src/train_and_log_model.py
+      - params.yaml
+      - data/features/X_train_selected.csv
+      - data/features/X_test_selected.csv
+      - data/splitted/y_train.csv
+      - data/splitted/y_test.csv
+    outs:
+      - metrics/metrics.txt
+      - model/best_model.pkl
