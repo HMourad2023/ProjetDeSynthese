@@ -26,13 +26,13 @@ jobs:
     
     - name: Run authentication script
       env:
-        GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+        GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets. secrets.GOOGLE_CREDENTIALS }}
       run: python auth.py
 
     - name: Setup Google Credentials
       run: |
         mkdir -p ~/.config/gdrive
-        echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}" > ~/.config/gdrive/credentials.json
+        echo "${{ secrets. secrets.GOOGLE_CREDENTIALS }}" > ~/.config/gdrive/credentials.json
 
     - name: Pull data from DVC remote
       run: dvc pull
