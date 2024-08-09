@@ -24,18 +24,15 @@ jobs:
       run: |
         dvc config core.analytics false
 
-    - name: Setup Google Credentials
-      run: |
-        mkdir -p ~/.config/gdrive
-        echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}" > ~/.config/gdrive/credentials.json
+    - name: Run authentication script
+      env:
+         GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+      run: python auth.py
 
     - name: Pull data from DVC remote
       run: dvc pull
 
-    - name: Run authentication script
-      env:
-        GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
-      run: python auth.py
+    
 
     - name: Data Processing and Model Training
       run: |
