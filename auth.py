@@ -4,7 +4,7 @@ import os
 import json
 
 # Chemin du fichier credentials
-credentials_path = r'C:\Users\Asus_M\Desktop\credentials.json'
+credentials_path = 'C:/Users/Asus_M/Desktop/credentials.json'
 
 # Charger les credentials
 try:
