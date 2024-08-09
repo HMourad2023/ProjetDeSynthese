@@ -1,0 +1,158 @@
+schema: '2.0'
+stages:
+  load_data:
+    cmd: python src/load_data.py
+    deps:
+    - path: C:/Users/Asus_M/Desktop/data.csv
+      hash: md5
+      md5: 878eb26b17451466fe551b3a48b90821
+      size: 13471871
+    - path: params.yaml
+      hash: md5
+      md5: f3dff412b0b84f319deb0307f175abaf
+      size: 1264
+    outs:
+    - path: data/external/data.csv
+      hash: md5
+      md5: 2c545188be4480821f38fd1e4fe47e57
+      size: 13175580
+  prepare_data:
+    cmd: python src/prepare_data.py
+    deps:
+    - path: data/external/data.csv
+      hash: md5
+      md5: 2c545188be4480821f38fd1e4fe47e57
+      size: 13175580
+    - path: params.yaml
+      hash: md5
+      md5: f3dff412b0b84f319deb0307f175abaf
+      size: 1264
+    - path: src/prepare_data.py
+      hash: md5
+      md5: 3276c7fa222a864cdab9a284551d37c3
+      size: 1357
+    outs:
+    - path: data/prepared/prepared_data.csv
+      hash: md5
+      md5: 6b5d4b3a56e491611278ace97d785dd3
+      size: 9620094
+  transform_data:
+    cmd: python src/transform_data.py
+    deps:
+    - path: data/prepared/prepared_data.csv
+      hash: md5
+      md5: 6b5d4b3a56e491611278ace97d785dd3
+      size: 9620094
+    - path: params.yaml
+      hash: md5
+      md5: f3dff412b0b84f319deb0307f175abaf
+      size: 1264
+    - path: src/transform_data.py
+      hash: md5
+      md5: efa469ec9f60118e2d466cbc6146b786
+      size: 1449
+    outs:
+    - path: data/processed/transformed_data.csv
+      hash: md5
+      md5: c37d89c2423e026af2d5e3a5c9727103
+      size: 6203275
+  split_data:
+    cmd: python src/split_data.py
+    deps:
+    - path: data/processed/transformed_data.csv
+      hash: md5
+      md5: c37d89c2423e026af2d5e3a5c9727103
+      size: 6203275
+    - path: params.yaml
+      hash: md5
+      md5: f3dff412b0b84f319deb0307f175abaf
+      size: 1264
+    - path: src/split_data.py
+      hash: md5
+      md5: 8b4e6b24c2a9557f962a98a328ac58ce
+      size: 1207
+    outs:
+    - path: data/splitted/X_test.csv
+      hash: md5
+      md5: b6262eb560b0aadba56d347a5b9f19e8
+      size: 914419
+    - path: data/splitted/X_train.csv
+      hash: md5
+      md5: a93308c7f12615d3909cc86bec6af53b
+      size: 3656639
+    - path: data/splitted/y_test.csv
+      hash: md5
+      md5: 2b4a2eda81ade9c1807feae523842a16
+      size: 336406
+    - path: data/splitted/y_train.csv
+      hash: md5
+      md5: 3ac1e3a7bccd19a49262e0a3d93c189b
+      size: 1345400
+  create_features:
+    cmd: python src/features.py
+    deps:
+    - path: data/splitted/X_train.csv
+      hash: md5
+      md5: a93308c7f12615d3909cc86bec6af53b
+      size: 3656639
+    - path: data/splitted/y_train.csv
+      hash: md5
+      md5: 3ac1e3a7bccd19a49262e0a3d93c189b
+      size: 1345400
+    - path: notebooks/features.txt
+      hash: md5
+      md5: 38d542f8b28b786cfce28acf883491ca
+      size: 151
+    - path: params.yaml
+      hash: md5
+      md5: f3dff412b0b84f319deb0307f175abaf
+      size: 1264
+    - path: src/features.py
+      hash: md5
+      md5: b7b9e9ac141d79b8bef8e27ab845168a
+      size: 1291
+    outs:
+    - path: data/features/X_test_selected.csv
+      hash: md5
+      md5: f6f0384fb8c3dbccde86559e1e79a56f
+      size: 637101
+    - path: data/features/X_train_selected.csv
+      hash: md5
+      md5: 8b8ef973abdb8e79c6ccd9f7fdcbb513
+      size: 2548191
+  train_and_log_model:
+    cmd: python src/train_and_log_model.py
+    deps:
+    - path: data/features/X_test_selected.csv
+      hash: md5
+      md5: f6f0384fb8c3dbccde86559e1e79a56f
+      size: 637101
+    - path: data/features/X_train_selected.csv
+      hash: md5
+      md5: 8b8ef973abdb8e79c6ccd9f7fdcbb513
+      size: 2548191
+    - path: data/splitted/y_test.csv
+      hash: md5
+      md5: 2b4a2eda81ade9c1807feae523842a16
+      size: 336406
+    - path: data/splitted/y_train.csv
+      hash: md5
+      md5: 3ac1e3a7bccd19a49262e0a3d93c189b
+      size: 1345400
+    - path: params.yaml
+      hash: md5
+      md5: f3dff412b0b84f319deb0307f175abaf
+      size: 1264
+    - path: src/train_and_log_model.py
+      hash: md5
+      md5: 0e74bf6d0498e2b10926753f075cff50
+      size: 5052
+    outs:
+    - path: metrics/metrics.txt
+      hash: md5
+      md5: df174c432bcb42ef1697020c92f30907
+      size: 109
+    - path: model/best_model.pkl
+      hash: md5
+      md5: a9d02a53c7dbe270d1443332dc02026d
+      size: 493213713

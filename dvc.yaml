@@ -43,7 +43,7 @@ stages:
       - src/features.py
       - data/splitted/X_train.csv
       - data/splitted/y_train.csv
-      - data/features/features.txt  # Ajout du fichier features.txt
+      - notebooks/features.txt  # Ajout du fichier features.txt
       - params.yaml
     outs:
       - data/features/X_train_selected.csv

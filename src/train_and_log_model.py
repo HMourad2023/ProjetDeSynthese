@@ -66,8 +66,8 @@ if __name__ == "__main__":
     X_test_selected_path = params['data']['features']['X_test_selected']
     y_train_path = params['data']['splitted_data']['y_train']
     y_test_path = params['data']['splitted_data']['y_test']
-    model_path = params['data']['model']['path']
-    metrics_path = params['data']['metrics']['path']
+    model_path = params['model']['path']
+    metrics_path = params['metrics']['path']
 
     models = {
         'LinearRegression': LinearRegression(),

@@ -3,6 +3,8 @@ import pandas as pd
 from pipelines.prediction_pipeline import predict
 
 # Interface utilisateur avec Streamlit
+
+
 st.title('Application de Prédiction')
 
 # Création d'un formulaire pour saisir les valeurs
@@ -16,7 +18,7 @@ with st.form(key='prediction_form'):
     origin_wac = st.text_input('ORIGIN_WAC', '')
     dest = st.text_input('DEST', '')
     dest_city_name = st.text_input('DEST_CITY_NAME', '')
-    year = st.number_input('YEAR', min_value=1900, max_value=2100, value=2024)
+    year = st.number_input('YEAR', min_value=2018, max_value=2030, value=2024)
     month = st.number_input('MONTH', min_value=1, max_value=12, value=1)
     distance_group = st.text_input('DISTANCE_GROUP', '')
     class_ = st.text_input('CLASS', '')
@@ -40,7 +42,6 @@ if submit_button:
         'DISTANCE_GROUP': [distance_group],
         'CLASS': [class_]
     }
-    
     df = pd.DataFrame(data)
     
     # Faire des prédictions

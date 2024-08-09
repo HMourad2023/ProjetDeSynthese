@@ -10,32 +10,44 @@ with open('params.yaml', 'r') as f:
     params = yaml.safe_load(f)
 
 # Extraire les chemins et les configurations depuis params.yaml
-model_path = params['data']['model']['path']
-metrics_path = params['data']['metrics']['path']
 mlflow_tracking_uri = params['mlflow']['tracking_uri']
 model_name = params['mlflow']['model_name']
 
 # Définir l'URI de suivi MLflow
 mlflow.set_tracking_uri(mlflow_tracking_uri)
 
-def get_model_uri_from_stage(model_name, stage="Production"):
+def get_best_model_uri_from_stage(model_name, stage="Production"):
     client = MlflowClient()
-    # Obtenir la dernière version du modèle dans le stage spécifié
-    model_versions = client.get_latest_versions(model_name, stages=[stage])
+    
+    # Obtenir toutes les versions du modèle
+    latest_mv = client.get_latest_versions(model_name, stages=[stage])[0]
+    client.set_registered_model_alias(model_name, alias, latest_mv.version)
+    
     if not model_versions:
+        raise ValueError(f"No version of model '{model_name}' found.")
+    
+    # Afficher les versions du modèle
+    print(f"Versions trouvées pour le modèle '{model_name}':")
+    for mv in model_versions:
+        print(f"Version: {mv.version}, Stage: {mv.current_stage}")
+
+    # Filtrer les versions pour obtenir celles dans le stage spécifié
+    stage_versions = [mv for mv in model_versions if mv.current_stage == stage]
+    
+    if not stage_versions:
         raise ValueError(f"No version of model '{model_name}' found in stage '{stage}'.")
     
+    # Trouver la version la plus récente
+    best_version = max(stage_versions, key=lambda mv: int(mv.version))
+    
     # Obtenir l'URI du modèle
-    latest_version = model_versions[0].version
-    model_uri = f"models:/{model_name}/{latest_version}"
+    model_uri = f"models:/{model_name}/{best_version.version}"
     return model_uri
 
+
 def convert_input_example_to_serving_input(input_example):
-    # Convertir DataFrame en tableau NumPy
     if isinstance(input_example, pd.DataFrame):
         input_example = input_example.values
-    
-    # Retourner comme liste de listes (tableau 2D)
     return input_example.tolist()
 
 def validate_serving_input(model_uri, serving_payload):
@@ -55,31 +67,4 @@ def validate_serving_input(model_uri, serving_payload):
     print(f"La quantité de Fret prévue : {math.floor(freight)}")
     print(f"La quantité de Courrier prévue est : {math.floor(mail)}")
 
-# Exemple de données d'entrée
-INPUT_EXAMPLE = {
-    "DISTANCE": 7.723120,
-    "REGION": 1,
-    "CARRIER_NAME": 7,
-    "CARRIER_GROUP_NEW": 2,
-    "ORIGIN": 326,
-    "ORIGIN_WAC": 48,
-    "DEST": 412,
-    "DEST_CITY_NAME": 351,
-    "YEAR": 2,
-    "MONTH": 6,
-    "DISTANCE_GROUP": 4,
-    "CLASS": 0
-}
-
-# Convertir l'exemple d'entrée en DataFrame
-input_df = pd.DataFrame([INPUT_EXAMPLE])
-
-# Obtenir l'URI du modèle
-model_uri = get_model_uri_from_stage(model_name, stage="Production")
-print(f"Model URI in production: {model_uri}")
-
-# Convertir l'exemple d'entrée en format pour la prédiction
-serving_payload = convert_input_example_to_serving_input(input_df)
-
-# Valider le modèle avec l'exemple d'entrée
-validate_serving_input(model_uri, serving_payload)
+    return prediction_original

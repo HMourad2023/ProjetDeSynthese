@@ -12,9 +12,9 @@ data:
     file_path: "notebooks/features.txt"  # Chemin du fichier features.txt
     X_train_selected: "data/features/X_train_selected.csv"
     X_test_selected: "data/features/X_test_selected.csv"
-  model:
+model:
     path: "model/best_model.pkl"  # Le chemin du modèle local
-  metrics:
+metrics:
     path: "metrics/metrics.txt"  # Le chemin des métriques
 
 processing:
@@ -36,4 +36,4 @@ dvc:
 mlflow:
   tracking_uri: "http://localhost:5000"
   experiment_name: "experience1"
-  model_name: "Best_Model"  # Nom du modèle dans MLflow Registry
+  model_name: "Best_Model_Production"  # Nom du modèle dans MLflow Registry
