@@ -1,4 +1,4 @@
-from google.oauth2 import InstalledAppCredentials
+from google.oauth2 import service_account
 from googleapiclient.discovery import build
 import os
 import json
@@ -13,9 +13,8 @@ if credentials_json is None:
 credentials_info = json.loads(credentials_json)
 
 # Préparer les informations pour l'authentification
-creds = InstalledAppCredentials.from_client_info(
-    client_info=credentials_info,
-    scopes=['https://www.googleapis.com/auth/drive.metadata.readonly']
+creds = service_account.Credentials.from_service_account_info(
+    credentials_info, scopes=['https://www.googleapis.com/auth/drive.metadata.readonly']
 )
 
 # Construire le service Google Drive
