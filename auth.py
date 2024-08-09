@@ -35,7 +35,8 @@ try:
     results = service.files().list().execute()
     files = results.get('files', [])
 except Exception as e:
-    raise ValueError(f"Error listing files: {e}")
+    print(f"An error occurred: {e}")
+    files = []
 
 if not files:
     print('No files found.')

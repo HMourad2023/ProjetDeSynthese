@@ -12,7 +12,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.12'
+        python-version: '3.9'
 
     - name: Install dependencies
       run: |
@@ -20,10 +20,19 @@ jobs:
         pip install -r requirements.txt
         pip install dvc
 
+    - name: Configure DVC
+      run: |
+        dvc config core.analytics false
+    
     - name: Run authentication script
       env:
         GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
       run: python auth.py
+
+    - name: Setup Google Credentials
+      run: |
+        mkdir -p ~/.config/gdrive
+        echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}" > ~/.config/gdrive/credentials.json
 
     - name: Pull data from DVC remote
       run: dvc pull
