@@ -1,47 +1,25 @@
-name: ML Ops Pipeline
+name: Google Drive Access
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+on: [push]
 
 jobs:
-  dvc:
+  access-google-drive:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout Source Code
+    - name: Checkout repository
       uses: actions/checkout@v3
-
-    - name: Setup Python Environment
-      uses: actions/setup-python@v3
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
       with:
-        python-version: 3.12.4
-
-    - name: Install Project Dependencies
+        python-version: '3.12'
+        
+    - name: Install dependencies
       run: |
-        pip install --upgrade pip
-        pip install --upgrade google-api-python-client google-auth
+        python -m pip install --upgrade pip
         pip install -r requirements.txt
-
+        
     - name: Run authentication script
       env:
-          CLIENT_ID: ${{ secrets.CLIENT_ID }}
-          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-      run: npm run auth
-      
-    - name: Retrieve Data from DVC Remote
-      run: dvc pull
-
-    - name: Execute Pipeline
-      run: |
-        dvc repro
-
-    - name: Upload Updated Data to DVC Remote
-      run: dvc push
-
-    - name: Verify DVC Data Status
-      run: dvc status
+        GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+      run: python auth.py
