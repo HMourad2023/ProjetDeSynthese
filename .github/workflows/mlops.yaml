@@ -12,7 +12,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.9'
+        python-version: '3.12'
 
     - name: Install dependencies
       run: |
@@ -20,10 +20,6 @@ jobs:
         pip install -r requirements.txt
         pip install dvc
 
-    - name: Configure DVC
-      run: |
-        dvc config core.analytics false
-    
     - name: Run authentication script
       env:
         GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
