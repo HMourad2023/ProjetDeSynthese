@@ -10,20 +10,32 @@ if credentials_json is None:
     raise ValueError("GOOGLE_APPLICATION_CREDENTIALS environment variable is not set")
 
 # Convert JSON string to dictionary
-credentials_info = json.loads(credentials_json)
+try:
+    credentials_info = json.loads(credentials_json)
+except json.JSONDecodeError as e:
+    raise ValueError(f"Error decoding JSON: {e}")
 
 # Prepare the credentials for service account
-creds = service_account.Credentials.from_service_account_info(
-    credentials_info,
-    scopes=['https://www.googleapis.com/auth/drive.metadata.readonly']
-)
+try:
+    creds = service_account.Credentials.from_service_account_info(
+        credentials_info,
+        scopes=['https://www.googleapis.com/auth/drive.metadata.readonly']
+    )
+except Exception as e:
+    raise ValueError(f"Error creating credentials: {e}")
 
 # Build the Google Drive service
-service = build('drive', 'v3', credentials=creds)
+try:
+    service = build('drive', 'v3', credentials=creds)
+except Exception as e:
+    raise ValueError(f"Error building Google Drive service: {e}")
 
 # List files in Google Drive
-results = service.files().list().execute()
-files = results.get('files', [])
+try:
+    results = service.files().list().execute()
+    files = results.get('files', [])
+except Exception as e:
+    raise ValueError(f"Error listing files: {e}")
 
 if not files:
     print('No files found.')
