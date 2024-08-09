@@ -6,3 +6,5 @@ pandas
 PyYAML
 scikit_learn
 streamlit
+google-api-python-client
+google-auth
