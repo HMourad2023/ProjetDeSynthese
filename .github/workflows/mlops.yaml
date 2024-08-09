@@ -1,10 +1,14 @@
-name: Data Processing and Deployment
+name: Deploy Streamlit App
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
-  process-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
@@ -18,49 +22,16 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install dvc
-
-    - name: Configure DVC
-      run: |
-        dvc config core.analytics false
 
     - name: Setup Google Credentials
-      env:
-        GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
       run: |
         mkdir -p ~/.config/gdrive
-        echo "${GOOGLE_APPLICATION_CREDENTIALS}" > ~/.config/gdrive/credentials.json
+        echo "${{ secrets.GOOGLE_CREDENTIALS }}" > ~/.config/gdrive/credentials.json
 
-    - name: Run authentication script
-      run: python auth.py
-
-    - name: Pull data from DVC remote
-      run: dvc pull
-
-    - name: Data Processing and Model Training
-      run: |
-        dvc repro src/load_data.py
-        dvc repro src/prepare_data.py
-        dvc repro src/transform_data.py
-        dvc repro src/split_data.py
-        dvc repro src/features.py
-        dvc repro src/train_and_log_model.py
-
-    - name: Push data and model to DVC remote
-      run: dvc push
-
-    - name: Create Streamlit configuration file
-      run: |
-        mkdir -p ~/.streamlit
-        echo "[server]" > ~/.streamlit/config.toml
-        echo "headless = true" >> ~/.streamlit/config.toml
-        echo "port = 8501" >> ~/.streamlit/config.toml
-        echo "enableCORS = false" >> ~/.streamlit/config.toml
-        echo "enableXsrfProtection = false" >> ~/.streamlit/config.toml
-
-    - name: Deploy to Streamlit Community Cloud
+    - name: Deploy to Streamlit Cloud
       env:
         STREAMLIT_AUTH_TOKEN: ${{ secrets.STREAMLIT_AUTH_TOKEN }}
       run: |
         pip install streamlit
         streamlit share deploy --token $STREAMLIT_AUTH_TOKEN --app-dir ./src --port 8501
+
