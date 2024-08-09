@@ -20,22 +20,18 @@ jobs:
         pip install -r requirements.txt
         pip install dvc  # Install DVC
 
+    - name: Run authentication script
+      env:
+        GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+      run: python auth.py
+
     - name: Configure DVC
       run: |
         dvc config core.analytics false  # Disable analytics for CI
 
     - name: Pull data from DVC remote
       run: dvc pull
-
-    - name: Run authentication script
-      env:
-        GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
-      run: python auth.py
-
-    - name: Data pulling
-      run: |
-        dvc pull
-
+      
     - name: execute pipeline
       run: dvc repro
 
